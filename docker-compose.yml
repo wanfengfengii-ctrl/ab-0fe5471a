@@ -1,0 +1,19 @@
+name: vector-clock-audit
+
+services:
+  audit:
+    build: .
+    image: vector-clock-audit:latest
+    # Host port is configurable via APP_PORT (container always listens on 8000).
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      PORT: "8000"
+      HOST: "0.0.0.0"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+    restart: unless-stopped
